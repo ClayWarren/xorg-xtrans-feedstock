@@ -1,0 +1,63 @@
+schema_version: 1
+
+context:
+  version: "1.6.0"
+  am_version: "1.16"  # keep synchronized with build.sh
+
+package:
+  name: xorg-xtrans
+  version: ${{ version }}
+
+source:
+  url: https://www.x.org/releases/individual/lib/xtrans-${{ version }}.tar.xz
+  sha256: faafea166bf2451a173d9d593352940ec6404145c5d1da5c213423ce4d359e92
+  patches:
+    - if: win
+      then: mingw.patch
+
+build:
+  number: 2
+
+requirements:
+  build:
+    - if: win
+      then:
+        - m2-autoconf
+        - m2-automake${{ am_version }}
+        - m2-libtool
+        - m2-pkg-config
+        - m2-base
+        - m2-make
+        - ${{ compiler("m2w64_c") }}
+        - ${{ stdlib("m2w64_c") }}
+      else:
+        - pkg-config
+        - gnuconfig
+        - make
+        - ${{ compiler("c") }}
+        - ${{ stdlib("c") }}
+        - autoconf
+        - automake
+        - gettext
+        - libtool
+  host:
+    - xorg-util-macros
+
+tests:
+  - package_contents:
+      include:
+        - X11/Xtrans/Xtrans.h
+      files:
+        - if: win
+          then: Library/share/pkgconfig/xtrans.pc
+          else: share/pkgconfig/xtrans.pc
+
+about:
+  homepage: https://www.x.org/
+  license: MIT
+  license_file: COPYING
+  summary: Low-level data transport prototypes for the X.org libraries.
+
+extra:
+  recipe-maintainers:
+    - pkgw
