@@ -28,8 +28,6 @@ requirements:
         - m2-pkg-config
         - m2-base
         - m2-make
-        - ${{ compiler("m2w64_c") }}
-        - ${{ stdlib("m2w64_c") }}
       else:
         - pkg-config
         - gnuconfig
@@ -40,6 +38,12 @@ requirements:
         - automake
         - gettext
         - libtool
+    - if: win and target_platform == "win-arm64"
+      then: m2w64-gcc
+    - if: win and target_platform != "win-arm64"
+      then:
+        - ${{ compiler("m2w64_c") }}
+        - ${{ stdlib("m2w64_c") }}
   host:
     - xorg-util-macros
 
